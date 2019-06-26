@@ -1,0 +1,43 @@
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+URL server = new URL("http://your-server-location.com");
+WebDriver driver = new RemoteWebDriver(server, capabilities);
+
+public class Chatsite{
+  public WebDriver driver;
+  private WebElement talkbox;
+  private WebElement chatlog;
+  private WebElement sendbutton;
+
+  public Chatsite(WebDriver passed_in_driver){
+      driver = passed_in_driver;
+      talkbox = driver.find_element("name", "talkbox");
+      sendbutton = driver.find_element("name", "send");
+      chatlog = driver.find_element("name", "chatlog");
+      driver.get("http://www.yoursite.com");
+  }
+
+  public void say(String string_to_type){
+      talkbox.send_keys(string_to_type);
+      sendbutton.click();
+  }
+
+  public void sees_in_the_chatlog(String expected_content){
+      String current_chat_text =  chatlog.getText();
+      assertTrue("Couldn't find content", current_chat_text.contains(expected_content));
+  }
+}
+
+#Now, in your tests
+#Name your users so it's easier to keep track of them
+Chatsite david = Chatsite.new(user_1);
+Chatsite susan = Chatsite.new(user_2);
+
+david.say("Isn't it a fine day?");
+susan.sees_in_the_chatlog("Isn't it a fine day?");
+
+susan.say("If you're going to talk about the weather I'm failing this test case");
+## And so on in that fashion
